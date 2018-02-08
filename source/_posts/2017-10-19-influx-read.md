@@ -23,12 +23,21 @@ interator的嵌入结构如下:
 2. 获取底层数据的Iterator。
     两类Cursor，cur (floatCursor)和aux(CursorAt, 对原生cursor的封装)。
 
+## 创建iterator的层级
+node_s -> source_s > shard_s -> tagset_s -> serieskey_s
+> 1. 远程的iterator到node级别
+> 2. 涉及merger的有: node, source, shard, tagset. 基本上每级都会进行合并 
+> 3. source 是对多个shard进行source划分, 分别创建再merge合并
 
 ## Questions
-### A: emitor里有个iterator，是如何同步多个iterator的时间戳的？
-Q: 创建buildAuxIterators时，先创建1个AuxIterator。 然后再根据fields创建多个FieldAuxIterator
+### Q1: emitor里有个iterator，是如何同步多个iterator的时间戳的？
+A: 创建buildAuxIterators时，先创建1个AuxIterator。 然后再根据fields创建多个FieldAuxIterator
 同时把这些fieldAuxIterator注册到顶级AuxIterator, 最后返回fieldAuxIterator.   
    对于不同shard的interator，如何同步的呢？  
 创建了一个SortedMergeIterator，里面有个小根heap。堆里的元素是子Iterator与point的组合结构item。
 初始化时，从每个子Iterator读1个point，然后构造heap。读取时，从顶部pop出item，读取里面的point用于返回，
 同时再从子Iterator里读一个point，然后再把这个item push到heap里。
+
+### Q2: 为何limit会比较慢
+A: 由于iterator的装饰特性, 先执行内部的mergerInterator, 再执行limit.  mergeInterator会根据所有的时间线创建1个堆,
+以便于排序. 如果维度很高,创建这个堆的过程也很耗时. 即使查询条件limit=1, 也需要一段时间来执行mergeInterator.

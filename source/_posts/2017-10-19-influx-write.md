@@ -140,3 +140,11 @@ footer有8个字节, 存储index部分在当前tsm文件里偏移值.
   + 创建cache的snapshot. cache这里用了一个交换机制, 交换snapshot的store和正在提供服务的cache的store.
   + 创建cacheKeyIteator. 并发执行数据的encode
   + 遍历iteator,写入到tsm文件.
+
+## 4. 索引合并
+### 4.1 索引日志合并
+在index发生变化(create or drop)时,会在最后一步调用CheckLogFile, 触发tsl合并成tsi文件.  
+
+
+### 4.2 索引文件合并
+在index文件打开时,会创建goroutine不断检查合并tis文件. 索引日志合并最后也会触发索引文件合并.

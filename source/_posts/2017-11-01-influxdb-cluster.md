@@ -51,6 +51,25 @@ datanode机器。
 然后再找到shardgroup下所有的shard，再从shard关联的datanode中选择其中一个放入请求列表，
 然后并行把请求发送给实际存储数据的datanode，最后合并分布式查询结果，并返回给客户端。
 
+## 如何提高查询能力
+按照场景进行划分
++ 数据分析
+验证想法，频率低。可以支持功能，但是限制查询频率
++ 数据应用
+查询参数基本一样，仅仅时间range不一样。预聚合进入tsdb。
+查询语句转换成预聚合查询结果的查询
+
+因此可以抽象出三个组件。
++ store
+kv的查询模式。
+
++ stream
+聚合流式计算
+
++ proxy
+查询入口，采集分析查询语句的频率，生成预聚合规则。
+
+
 ### 参考资料
 1. [first:google gorup](https://groups.google.com/forum/#!msg/influxdb/3jQQMXmXd6Q/cGcmFjM-f8YJ)
 2. [0.9.0]( https://www.influxdata.com/blog/clustering-tags-and-enhancements-to-come-in-0-9-0/#signup)

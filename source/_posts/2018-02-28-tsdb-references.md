@@ -8,6 +8,7 @@ tags:
 [Time-Series Database Requirements](https://www.xaprb.com/blog/2014/06/08/time-series-database-requirements)
 [Measure Anything, Measure Everything](https://codeascraft.com/2011/02/15/measure-anything-measure-everything/)
 [Thoughts on Time-series Databases](http://jmoiron.net/blog/thoughts-on-timeseries-databases)
+[DB-engines rank categories](https://db-engines.com/en/ranking_categories)
 
 ## 设计
 [Writing a Time Series Database from Scratch](https://fabxc.org/tsdb/)

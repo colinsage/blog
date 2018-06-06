@@ -3,7 +3,21 @@ title: influx_read
 date: 2017-10-19 15:51:15
 tags:
 ---
-## 非聚和
+## 入口
+当使用http协议时，在handler的serveQuery处理方法。
+使用命令行时，insert语句也是转换成对应的http URL，Path是 "/query"
+
+## 类型
++ 元数据修改
++ 元数据查询
++ 数据查询
+
+## 数据查询
++ influxsql解析成statement
++ statement创建iterator
++ 聚合计算
+
+### 非聚和
 1. 先根据measurement创建AuxIterator。最小粒度单个timeseries，逐级merge而成。
 interator的嵌入结构如下:
 {% asset_img "mip-2017101919283058.png" "iterator层级" %}
@@ -11,22 +25,22 @@ interator的嵌入结构如下:
 3. AuxIterato执行backgroud
 4. 返回第2步创建的FieldAuxIterators
 
-## 创建基本类型Iterator
+### 创建基本类型Iterator
 基本类型Iterator包括FloatIterator，IntegerIterator，StringIterator,BooleanIterator
 1. 从元数据索引(内存 or TSI)中读取measurements所有seriesKeys
 2. 根据查询stmt里的Dimensions，对sereiesKeys进行分组形成tagset，然后组内seriesKeys排序，再对tagset排序。
 3. 对tagset里的seriesKeys再进行分组，然后创建goroutine处理每个分组
 
-## 读取的递进过程
+### 读取的递进过程
 两条线并行进行：
 1. 返回结果的Iterator
 2. 获取底层数据的Iterator。
     两类Cursor，cur (floatCursor)和aux(CursorAt, 对原生cursor的封装)。
 
-## 创建iterator的层级
+### 创建iterator的层级
 node_s -> source_s > shard_s -> tagset_s -> serieskey_s
 > 1. 远程的iterator到node级别
-> 2. 涉及merger的有: node, source, shard, tagset. 基本上每级都会进行合并 
+> 2. 涉及merger的有: node, source, shard, tagset. 基本上每级都会进行合并
 > 3. source 是对多个shard进行source划分, 分别创建再merge合并
 
 ## Questions

@@ -19,3 +19,6 @@ tags:
 ## Golang
 [The Go Programming Language](http://gopl-zh.b0.upaiyun.com/)
 [The Golang Standard Library by Example](https://books.studygolang.com/The-Golang-Standard-Library-by-Example/)
+
+## 时间序列分析
+[通过机器学习和时间序列数据理解软件系统行为](http://www.infoq.com/cn/articles/system-behaviour-time-series-ml)
